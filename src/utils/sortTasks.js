@@ -1,4 +1,4 @@
-export const SortTasks = (setSortedTodos, sortedTodos, setTodos) => {
+export const SortTasks = (setSortedTodos, sortedTodos) => {
 	const handleSortTasks = (todos) => {
 		const todosCopy = { ...todos }
 
@@ -15,7 +15,7 @@ export const SortTasks = (setSortedTodos, sortedTodos, setTodos) => {
 
 		setSortedTodos(newSortedTodos)
 
-		setTodos(sortedTasks)
+		// setTodos(sortedTasks)
 	}
 
 	return { handleSortTasks }

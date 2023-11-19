@@ -4,6 +4,7 @@ import { db } from '../fireBase.js'
 
 export const useRequestGetTasks = (setIsLoading) => {
 	const [todos, setTodos] = useState([])
+
 	useEffect(() => {
 		const tasksDbRef = ref(db, 'posts')
 

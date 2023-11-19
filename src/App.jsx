@@ -12,13 +12,30 @@ import { SortTasks } from './utils'
 import { FilteredTodos } from './utils'
 import { useRequestClickChangeTask } from './hooks'
 import { Loader } from './components/Loader/Loader.jsx'
+import { useDispatch, useSelector } from 'react-redux'
+import { getTodos } from './redux/actions/get-todos.js'
+import { onValue, ref } from 'firebase/database'
+import { db } from './fireBase.js'
 
 export const App = () => {
-	const [isLoading, setIsLoading] = useState(true)
+	// const [isLoading, setIsLoading] = useState(true)
 	const [inputValue, setInputValue] = useState('')
 	const [searchValue, setSearchValue] = useState('')
 	const [, setDebouncedSearchTerm] = useState('')
 	const [sortedTodos, setSortedTodos] = useState(false)
+
+	const dispatch = useDispatch()
+	const todos = useSelector((state) => state)
+
+	useEffect(() => {
+		const tasksDbRef = ref(db, 'posts')
+		return onValue(tasksDbRef, (snapshot) => {
+			const loadedTasks = snapshot.val() || {}
+			dispatch(getTodos(loadedTasks))
+		})
+	}, [])
+
+	// console.log(todos)
 
 	const { handleClickChangeTask, isModalOpen, setIsModalOpen } =
 		useRequestClickChangeTask()
@@ -29,9 +46,9 @@ export const App = () => {
 
 	const { requestChangeTask } = useRequestChangeTask(isModalOpen)
 
-	const { todos, setTodos } = useRequestGetTasks(setIsLoading)
+	// const { todos, setTodos } = useRequestGetTasks(setIsLoading)
 
-	const { handleSortTasks } = SortTasks(setSortedTodos, sortedTodos, setTodos)
+	const { handleSortTasks } = SortTasks(setSortedTodos, sortedTodos)
 
 	const { filteredTodos } = FilteredTodos(todos, searchValue)
 
@@ -72,9 +89,7 @@ export const App = () => {
 			>
 				Sort todos
 			</Button>
-			{isLoading ? (
-				<Loader />
-			) : filteredTodos.length > 0 ? (
+			{filteredTodos.length > 0 ? (
 				filteredTodos.map((todo) => (
 					<TodoItem
 						key={todo[0]}
